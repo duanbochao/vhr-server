@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -16,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -37,6 +40,15 @@ public class MyWebSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
     HrService hrService;
 
+    @Autowired
+    UrlFilter urlFilter;
+
+    @Autowired
+    AccessDecisitionHandler accessDecisitionHandler;
+
+    @Autowired
+    AccessManager accessManager;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(hrService).passwordEncoder(new BCryptPasswordEncoder());
@@ -50,7 +62,14 @@ public class MyWebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .anyRequest().authenticated()
+               .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+                   @Override
+                   public <O extends FilterSecurityInterceptor> O postProcess(O o) {
+                       o.setSecurityMetadataSource(urlFilter);
+                       o.setAccessDecisionManager(accessManager);
+                       return o;
+                   }
+               })
                 .and()
                 .formLogin().loginPage("/login_p").loginProcessingUrl("/login")
                 .usernameParameter("username").passwordParameter("password")
@@ -90,6 +109,6 @@ public class MyWebSecurity extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutUrl("/logout")
                 .permitAll()
-                .and().csrf().disable();
+                .and().csrf().disable().exceptionHandling().accessDeniedHandler(accessDecisitionHandler);
     }
 }

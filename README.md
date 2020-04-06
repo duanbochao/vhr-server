@@ -85,3 +85,16 @@ Setting--Editor--Inspections--General---Duplicated Code fragment ,把勾去掉�
 
 ```
 
+## 获取菜单和菜单对应的角色
+```aidl
+select m.*,r.`id` as rid,r.`name` as rname,r.`nameZh` as rnamezh from menu m 
+left join menu_role mr on m.`id`=mr.`mid` 
+left join role r on mr.`rid`=r.`id` 
+WHERE m.`enabled`=true
+order by m.`id` desc
+```
+
+
+## url访问的几种方式
+> 详情请参考博客https://www.cnblogs.com/gfbzs/p/12642324.html
+

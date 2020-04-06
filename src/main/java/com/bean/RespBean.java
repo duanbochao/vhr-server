@@ -7,9 +7,17 @@ package com.bean;
  * 该类用于封装返回给前端的数据
  */
 public class RespBean {
+    private String msg;
     private Integer status;
     private Object data;
 
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 
     @Override
     public String toString() {
@@ -29,13 +37,13 @@ public class RespBean {
     }
 
     //接收成功后数据
-    public  RespBean ok(Object data) {
+    public static RespBean ok(Object data) {
      return new RespBean(200,data);
     }
 
 
     //接收失败后数据
-    public  RespBean err(Object data) {
+    public static RespBean err(Object data) {
       return  new RespBean(500,data);
     }
 
