@@ -11,6 +11,16 @@ public class Role {
     private String name;
     private String nameZh;
 
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", nameZh='" + nameZh + '\'' +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }

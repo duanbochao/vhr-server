@@ -1,5 +1,6 @@
 package com.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,24 @@ public class Hr implements UserDetails {
     private String userface;
     private String remark;
     private List<Role> roles;
+
+
+    @Override
+    public String toString() {
+        return "Hr{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", address='" + address + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", enabled=" + enabled +
+                ", userface='" + userface + '\'' +
+                ", remark='" + remark + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
 
     public List<Role> getRoles() {
         return roles;
@@ -113,6 +132,7 @@ public class Hr implements UserDetails {
         return authorities;
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
         return password;
